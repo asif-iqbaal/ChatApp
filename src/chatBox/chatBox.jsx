@@ -167,7 +167,7 @@ function ChatBox() {
               </div>)
               :
               (
-                <div className='flex w-full '>
+                <div className='flex w-full mt-2'>
                 <div>
               <p className='text-white md:mx-2 md:p-4 mx-1 p-2 bg-[#1b2021] rounded-md'>
                 {message.text}
@@ -175,33 +175,10 @@ function ChatBox() {
               <span className='text-black text-sm'>{formattedDate}</span>
               </div>
               </div>
-             )}   
-                        
-                        {/* <span className='text-white'>{formattedDate}</span>
-          </div> */}
-       
+             )}          
       </div>
     );
   }
-
-//   const { seconds, nanoseconds } = message.createAt;
-//   const date = new Date(seconds * 1000 + nanoseconds / 1000000);
-//   const formattedDate = date.toLocaleString(); // Adjust formatting as needed
-
-//   return (
-//     <div className='flex flex-col' key={seconds}>
-//       <div className='flex w-full p-3'>
-//         <img src={message.img} alt="" className='h-9 w-10 p-2 rounded-full' />
-//         <div>
-//           <p className='text-white mx-2 p-4 bg-gray-500 rounded-md'>
-//             {message.text}
-//           </p>
-//           <span className='text-white'>{formattedDate}</span>
-//           {console.log({ seconds, nanoseconds })}
-//         </div>
-//       </div>
-//     </div>
-//   );
 })}
 
 
