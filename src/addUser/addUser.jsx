@@ -1,8 +1,19 @@
 import React, { useState } from "react";
 import Avatar from './avatar.png'
-import { arrayUnion, collection ,doc,getDocs,query,serverTimestamp,setDoc,updateDoc,where} from "firebase/firestore";
+import {
+ arrayUnion,
+ collection,
+ doc,
+ getDocs,
+ query,
+ serverTimestamp,
+ setDoc,
+ updateDoc,
+ where
+} from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useUserStore } from "../firebase/userStore";
+
 export default function AddUser(){
     const {currentUser} = useUserStore();
     const [user,setUser] = useState(null);

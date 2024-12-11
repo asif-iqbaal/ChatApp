@@ -14,7 +14,7 @@ function Profile(){
 
     return(
         <>
-        <div className='md:w-2/6 w-full
+        <div className='md:w-full w-full z-10 border-l-2 border-black
          h-screen bg-[#edf6f9]'>
             <div className='h-[10vh] bg-[#006d77] p-3'>
                 <p className='text-white text-2xl font-bold'>Profile</p>

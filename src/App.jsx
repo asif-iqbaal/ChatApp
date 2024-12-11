@@ -55,7 +55,7 @@ function App() {
               </Routes>
              
               {isLargeScreen && chatId && <ChatBox />}
-              {isLargeScreen && chatId && <Profile />}
+              {/* {isLargeScreen && chatId && <Profile />} */}
               
 
               {/* {chatId && <Profile />} */}

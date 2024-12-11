@@ -42,7 +42,7 @@ function Chat() {
     useEffect(() => {
         const unSub = onSnapshot(doc(db, "userchat", currentUser.id), async (res) => {
             const data = res.data();
-            console.log("chat data", data);
+           
             if (data) {
 
 
@@ -132,12 +132,12 @@ function Chat() {
                     <img src={More} alt="" className=' h-4 md:h-6 m-2' onClick={handleProfile}></img>
                     {openProfile && (
                         <div className="absolute left-[25%] top-[2%] transition  md:left-[10%] md:top-[6%] mt-2 w-48 z-10 bg-white border rounded shadow-lg">
-                            {!isLargeScreen && <button
+                            <button
                                 className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
                                 onClick={profile}
                             >
                                 Profile
-                            </button>}
+                            </button>
                             <button
                                 className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
                                 onClick={()=>auth.signOut()}
