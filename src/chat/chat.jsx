@@ -14,6 +14,8 @@ import { useChatStore } from '../firebase/chatStore';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../loading/loading';
 import { useWindowSize } from 'react-use';
+import {Trash} from 'lucide-react'
+import { toast } from 'react-toastify';
 
 function Chat() {
   // Responsive handling for screen sizes
@@ -96,11 +98,40 @@ function Chat() {
       if (!isLargeScreen) {
         navigate('/chat');
       }
+     
     } catch (error) {
-      console.error(error);
+      toast.error("User deletion failed")
     }
   };
 
+  // Function to handle chat deletion
+const HandleDelete = async (id) => {
+    if (!currentUser.id) return;
+  
+    try {
+      // Get the current user's chats
+      const userChatsRef = doc(db, 'userchat', currentUser.id);
+      const userChatsSnap = await getDoc(userChatsRef);
+  
+      if (userChatsSnap.exists()) {
+        const userChatsData = userChatsSnap.data().chats || [];
+  
+        // Filter out the chat to be deleted
+        const updatedChats = userChatsData.filter((chat) => chat.chatId !== id);
+  
+        // Update the Firestore document with the remaining chats
+        await updateDoc(userChatsRef, { chats: updatedChats });
+  
+        // Update the local state
+        setChats(updatedChats);
+        toast.dismiss("User deleted")
+      }
+    } catch (error) {
+      toast.error('Error deleting chat:', error);
+      console.log("delete error",error);
+    }
+  };
+  
   // Profile handling
   const handleProfile = () => {
     setOpenProfile((prev) => !prev);
@@ -159,16 +190,19 @@ function Chat() {
       {chats.map((chat) => (
         <div
           key={chat.chatId}
-          className={`flex w-full h-16 border-b-2 mt-2 border-gray-700 cursor-pointer ${
-            chat.isSeen ? 'bg-transparent' : 'bg-blue-500'
+          className={`flex w-full h-16 border-b-2 mt-2 border-gray-700 justify-between cursor-pointer ${
+            chat?.isSeen ? 'bg-transparent' : 'bg-blue-500'
           }`}
           onClick={() => handleSelect(chat)}
         >
-          <img src={chat.user.avatar || Avatar} alt="Avatar" className="rounded-full h-12 w-12 ml-3" />
+            <div className='flex'>
+          <img src={chat?.user?.avatar || Avatar} alt="Avatar" className="rounded-full h-12 w-12 ml-3" />
           <div className="ml-2 mt-2 text-black">
-            <h4 className="font-semibold">{chat.user.name}</h4>
-            <p>{chat.lastMessage}</p>
+            <h4 className="font-semibold">{chat?.user?.name}</h4>
+            <p>{chat?.lastMessage}</p>
           </div>
+          </div>
+          <div className='flex justify-center items-center hover:text-red-600' ><Trash  onClick={() => HandleDelete(chat?.chatId)} /></div>
         </div>
       ))}
 

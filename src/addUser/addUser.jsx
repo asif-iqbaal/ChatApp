@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Avatar from './avatar.png';
+import React, { useState, useEffect } from "react";
+import Avatar from "./avatar.png";
 import {
   arrayUnion,
   collection,
@@ -9,15 +9,31 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
+  getDoc,
+  onSnapshot,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useUserStore } from "../firebase/userStore";
+import { toast } from "react-toastify";
 
 export default function AddUser() {
   const { currentUser } = useUserStore();
   const [user, setUser] = useState(null);
+  const [chats, setChats] = useState([]);
 
+  // ✅ Load chats when the component mounts
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, "userchat", currentUser.id), (res) => {
+      const data = res.data();
+      if (data && data.chats) {
+        setChats(data.chats);
+      }
+    });
+    return () => unsubscribe();
+  }, [currentUser.id]);
+
+  // ✅ Handle user search
   const handleSearch = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -30,24 +46,39 @@ export default function AddUser() {
 
       if (!querySnapShot.empty) {
         setUser(querySnapShot.docs[0].data());
+      } else {
+        toast.error("User not found");
+        setUser(null);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.message);
     }
   };
 
+  // ✅ Handle adding a user
   const handleAdd = async () => {
+    if (!user) return;
+
+    // ✅ Check if the chat already exists
+    const existingChat = chats.find((chat) => chat.receiverId === user.id);
+    if (existingChat) {
+      toast.info("Chat already exists");
+      return;
+    }
+
     const chatRef = collection(db, "chats");
     const userChatsRef = collection(db, "userchat");
 
     try {
       const newChatRef = doc(chatRef);
 
+      // Create a new chat document
       await setDoc(newChatRef, {
         createdAt: serverTimestamp(),
         messages: [],
       });
 
+      // Update both users' chat lists
       await updateDoc(doc(userChatsRef, user.id), {
         chats: arrayUnion({
           chatId: newChatRef.id,
@@ -65,8 +96,12 @@ export default function AddUser() {
           updatedAt: Date.now(),
         }),
       });
+
+      toast.success("Chat added successfully");
+      setUser(null); // Clear the user after adding
     } catch (error) {
       console.error(error);
+      toast.error("Failed to add chat");
     }
   };
 
