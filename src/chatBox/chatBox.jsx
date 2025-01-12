@@ -123,106 +123,52 @@ function ChatBox() {
     };
 
     return (
-        <div className='w-full md:w-3/4 h-screen border-r-2 border-r-gray-700 bg-[#edf6f9] relative transition-transform'>
-            <div className='flex md:h-[10vh] h-[10vh] md:justify-between w-full md:w-full bg-[#006d77] border-b-black fixed top-0  border-r-2 border-gray-700'>
+        <div className="bg-[#edf6f9] h-screen md:w-3/4 relative">
+            {/* Header */}
+            <div className="bg-[#006d77] flex items-center px-4 py-3 border-b border-gray-700 fixed w-full md:w-3/4">
                 {!isLargeScreen && (
-                    <button className='text-white' onClick={handleNavigate}>
-                        <img src={Back} alt="back" className='ml-2 h-4 w-6 md:h-8 md:w-10' />
+                    <button onClick={handleNavigate}>
+                        <img src={Back} alt="Back" className="h-8 w-8" />
                     </button>
                 )}
-                {users.map((message) => (
-                    <div className='w-2/3 flex md:h-12 md:m-4 md:my-3 my-1' key={message.id}>
-                        <img src={message.avatar} alt="img" className='h-16 md:h-12 md:w-12 w-14 p-1 py-[10px] md:p-0 rounded-full' />
-                        <h3 className='m-2 text-white font-sans font-semibold'>{message.name}</h3>
-                    </div>
-                ))}
-                <div className='md:w-1/3 flex justify-center items-center'>
-                    {/* <img src={Call} alt=""  className=' h-4 md:h-5 m-2'/>
-                    <img src={Video} alt="" className=' h-4 md:h-6 m-2' />
-                    <img src={Info} alt="" className=' h-4 md:h-6 m-1 md:m-2' /> */}
+                <div className="flex items-center ml-4 space-x-3">
+                    {users.map(user => (
+                        <div key={user.id} className="flex items-center space-x-2">
+                            <img src={user.avatar || Avatar} alt="Avatar" className="h-12 w-12 rounded-full" />
+                            <span className="text-white font-medium">{user.name}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
-            <div className='md:h-[80vh] h-[70vh] md:mt-[10vh] mt-[20vh] overflow-y-scroll hide-scrollbar border-gray-700'>
-                {chat?.messages?.map((message) => {
-                    if (message.createAt) {
-                        const { seconds, nanoseconds } = message.createAt;
-                        const date = new Date(seconds * 1000 + nanoseconds / 1000000);
-                        const formattedDate = `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
 
-                        return (
-                            <div className='flex flex-col px-10' key={message.id || Math.random()}>
-                                {message.senderId === currentUser.id ? (
-                                    <div className='flex w-full justify-end mt-2'>
-                                        <div>
-                                            <p className='text-white md:mx-2 md:p-3 mx-1 p-2 bg-[#468189] rounded-md'>
-                                                {message.img ? <img src={message.img} className='h-auto w-52' /> : message.text}
-                                            </p>
-                                            <span className='text-black text-sm'>{formattedDate}</span>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className='flex w-full mt-2'>
-                                        <div>
-                                            <p className='text-white md:mx-2 md:p-3 mx-1 p-2 bg-[#1b2021] rounded-md'>
-                                                {message.img ? <img src={message.img} className='h-auto w-52' /> : message.text}
-                                            </p>
-                                            <span className='text-black text-sm'>{formattedDate}</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    }
-                    return null;
-                })}
-                {img.url && (
-                    <div>
-                        <img src={img.url} alt="" className='h-[350px] w-1/2 p-4' />
-                    </div>
-                )}
-                <div ref={endRef}></div>
-            </div>
-            <div className='flex md:h-[10vh] h-[10vh] w-full justify-between bg-[#1b2021] items-center border-t-2 border-gray-800'>
-                <div className='md:flex md:w-1/5 justify-center items-center'>
-                    <label htmlFor="file">
-                        <img src={Img} alt="img" className='h-5 m-2' />
-                    </label>
-                    <input type="file" id='file' style={{ display: "none" }} onChange={handleImg} />
-                    <img src={Camera} alt="img" className='h-5 m-2 hidden md:block' />
-                    <img src={Mic} alt="img" className='h-5 m-2 hidden md:block' />
-                </div>
-                <div className='flex justify-center items-center md:w-4/5 w-4/6'>
-                    <input
-                        type="text"
-                        placeholder='type message'
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        className='ml-3 w-full md:h-10 h-7 rounded-lg p-3'
-                    />
-                </div>
-                <div className='flex w-2/5 justify-evenly items-center'>
-                    <div>
-                        <img src={Emoji} alt="img" className='relative md:h-5 md:m-2 h-4' onClick={() => setEmoji((prev) => !prev)} />
-                        <div className='absolute bottom-32 md:right-8 right-4'>
-                            <EmojiPicker open={emoji} onEmojiClick={handleEmoji} className='h-8 w-6' />
+            {/* Chat Messages */}
+            <div className="h-[85vh] w-screen md:w-auto md:h-[calc(100vh-140px)] overflow-y-auto p-4">
+                {chat?.messages?.map((msg, index) => (
+                    <div key={index} className={`flex ${msg.senderId === currentUser.id ? 'justify-end' : ''} mb-4`}>
+                        <div className={`bg-[#468189] text-white p-3 rounded-md max-w-xs ${msg.senderId === currentUser.id ? 'bg-blue-500' : 'bg-gray-700'}`}>
+                            {msg.img ? <img src={msg.img} alt="Image" className="w-full rounded-md" /> : msg.text}
                         </div>
                     </div>
-                    {loading ? (
-                        <button
-                            onClick={handleSend}
-                            className='bg-green-700 md:w-1/2 w-2/4 p-1 text-white rounded-md'
-                        >
-                            wait...
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleSend}
-                            className='bg-blue-700 md:w-1/2 w-2/4 p-1 text-white rounded-md'
-                        >
-                            Send
-                        </button>
-                    )}
-                </div>
+                ))}
+                <div ref={endRef}></div>
+            </div>
+
+            {/* Message Input */}
+            <div className="bg-[#1b2021] fixed bottom-0 w-full md:w-3/4 flex items-center px-4 py-2 space-x-2 border-t border-gray-800">
+                <label htmlFor="file" className="cursor-pointer">
+                    <img src={Img} alt="Upload" className="h-6 w-6" />
+                </label>
+                <input type="file" id="file" onChange={handleImg} className="hidden" />
+                <input
+                    type="text"
+                    placeholder="Type a message..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="flex-1 bg-gray-800 text-white px-4 py-2 rounded-lg outline-none"
+                />
+                <button onClick={handleSend} className="bg-blue-600 text-white px-4 py-2 rounded-md">
+                    {loading ? 'Sending...' : 'Send'}
+                </button>
             </div>
         </div>
     );

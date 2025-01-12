@@ -81,7 +81,7 @@ function Login() {
         <>
             <div className=" w-screen h-screen flex  justify-center items-center">
                 {!hide &&
-                 <div className=" w-full md:w-1/2 h-[80vh]  md:m-9 rounded-[78px]  bg-[#f5f5f5] shadow-[34px_34px_69px_#626262,-34px_-34px_69px_#ffffff]">
+                 <div className=" w-full md:w-1/2 h-[80vh]  md:m-9 md:rounded-[78px]  md:bg-[#f5f5f5] md:shadow-[34px_34px_69px_#626262,-34px_-34px_69px_#ffffff]">
 
                     <div className="   flex justify-center items-center h-full ">
 
@@ -115,7 +115,7 @@ function Login() {
                 {/*                                         register                          */}
                 {hide && 
                 <div className="w-full md:w-1/2 ">
-                    <div className=" w-full flex justify-center items-center rounded-[78px]  bg-[#f5f5f5] shadow-[34px_34px_69px_#626262,-34px_-34px_69px_#ffffff]">
+                    <div className=" w-full flex justify-center items-center md:rounded-[78px]  md:bg-[#f5f5f5] md:shadow-[34px_34px_69px_#626262,-34px_-34px_69px_#ffffff]">
                         <form onSubmit={handleRegister} className="  w-2/3 flex flex-col m-3">
                             <label htmlFor="file">
                                 <img src={avatar.url || Avatar} alt="" className='md:h-24 md:w-28' />
