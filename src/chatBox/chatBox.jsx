@@ -123,7 +123,7 @@ function ChatBox() {
     };
 
     return (
-        <div className="bg-[#edf6f9] h-screen md:w-3/4 relative">
+        <div className="bg-[#edf6f9] h-screen md:w-3/4 relative ">
             {/* Header */}
             <div className="bg-[#006d77] flex items-center px-4 py-3 border-b border-gray-700 fixed w-full md:w-3/4">
                 {!isLargeScreen && (
@@ -142,7 +142,7 @@ function ChatBox() {
             </div>
 
             {/* Chat Messages */}
-            <div className="h-[85vh] w-screen md:w-auto md:h-[calc(100vh-140px)] overflow-y-auto p-4">
+            <div className="h-[85vh] w-screen md:w-auto md:h-[calc(100vh-140px)] mt-[10vh] overflow-y-auto p-4">
                 {chat?.messages?.map((msg, index) => (
                     <div key={index} className={`flex ${msg.senderId === currentUser.id ? 'justify-end' : ''} mb-4`}>
                         <div className={`bg-[#468189] text-white p-3 rounded-md max-w-xs ${msg.senderId === currentUser.id ? 'bg-blue-500' : 'bg-gray-700'}`}>

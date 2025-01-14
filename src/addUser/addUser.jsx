@@ -106,7 +106,7 @@ export default function AddUser() {
   };
 
   return (
-    <div className="absolute left-1/2 bottom-1/2 transform -translate-x-1/2 translate-y-1/2 md:w-96 w-80 p-6 bg-slate-700 shadow-lg rounded-xl backdrop-blur-md">
+    <div className="z-20 absolute left-1/2 bottom-1/2 transform -translate-x-1/2 translate-y-1/2 md:w-96 w-80 p-6 bg-slate-700 shadow-lg rounded-xl backdrop-blur-md">
       <form onSubmit={handleSearch} className="flex items-center justify-between mb-4">
         <input
           type="text"

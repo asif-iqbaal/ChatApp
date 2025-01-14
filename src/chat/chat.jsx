@@ -12,7 +12,7 @@ import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useChatStore } from '../firebase/chatStore';
 import { useNavigate } from 'react-router-dom';
-import Loading from '../loading/loading';
+import {LucideLoaderPinwheel} from 'lucide-react';
 import { useWindowSize } from 'react-use';
 import {Trash} from 'lucide-react'
 import { toast } from 'react-toastify';
@@ -145,7 +145,7 @@ const HandleDelete = async (id) => {
   if (loading) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
-        <Loading />
+        <LucideLoaderPinwheel />
       </div>
     );
   }
