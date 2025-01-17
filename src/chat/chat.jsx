@@ -40,13 +40,13 @@ function Chat() {
   };
 
   // Loading state handling
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500); // Simulates loading
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1500); // Simulates loading
 
-    return () => clearTimeout(timer); // Cleanup timer
-  }, []);
+  //   return () => clearTimeout(timer); // Cleanup timer
+  // }, []);
 
   // Fetch user chats
   useEffect(() => {
@@ -67,8 +67,10 @@ function Chat() {
 
         const chatData = await Promise.all(promises);
         setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+        setLoading(false);
       } else {
         setChats([]);
+        setLoading(false);
       }
     });
 
@@ -152,9 +154,9 @@ const HandleDelete = async (id) => {
 
   // Main component render
   return (
-    <div className="w-full md:w-1/4 h-screen bg-[#edf6f9] overflow-y-scroll hide-scrollbar border-r-2 border-gray-700 transition-transform">
+    <div className={`w-full md:w-1/4 h-screen bg-[#edf6f9] overflow-y-scroll hide-scrollbar border-r-2 border-gray-700 transition-transform`}>
       {/* Header */}
-      <div className="flex justify-between w-full p-3 h-[10vh] bg-[#006d77]">
+      <div className="flex justify-between w-full p-3 h-[10vh] bg-gradient-to-br from-blue-500 to-indigo-900">
         <div className="flex items-center">
           <img src={currentUser.avatar || Avatar} alt="Avatar" className="h-9 md:h-full w-8 md:w-12 rounded-full" />
           <h3 className="m-2 text-white font-serif font-bold">{currentUser.name}</h3>
@@ -190,12 +192,12 @@ const HandleDelete = async (id) => {
       {chats.map((chat) => (
         <div
           key={chat.chatId}
-          className={`flex w-full h-16 border-b-2 mt-2 border-gray-700 justify-between cursor-pointer ${
+          className={`flex w-full h-16 hover:bg-blue-100 border-b-2 mt-2 border-gray-700 justify-between cursor-pointer ${
             chat?.isSeen ? 'bg-transparent' : 'bg-blue-500'
           }`}
-          onClick={() => handleSelect(chat)}
+          
         >
-            <div className='flex'>
+            <div className='flex w-[80%]' onClick={() => handleSelect(chat)}>
           <img src={chat?.user?.avatar || Avatar} alt="Avatar" className="rounded-full h-12 w-12 ml-3" />
           <div className="ml-2 mt-2 text-black">
             <h4 className="font-semibold">{chat?.user?.name}</h4>
