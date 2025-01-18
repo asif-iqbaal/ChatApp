@@ -16,12 +16,13 @@ import Upload from '../firebase/upload';
 import { useNavigate } from 'react-router-dom';
 import Back from './back.png';
 import { useWindowSize } from 'react-use';
+import CryptoJS from 'crypto-js';
 
 function ChatBox() {
     const { width } = useWindowSize();
     const isLargeScreen = width > 768;
     const [chat, setChat] = useState();
-    const [text, setText] = useState("");
+    const [texts, setTexts] = useState("");
     const [loading, setLoading] = useState(false);
     const [emoji, setEmoji] = useState(false);
     const [users, setUsers] = useState([]);
@@ -36,6 +37,15 @@ function ChatBox() {
     const chatContainerRef = useRef(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
     const navigate = useNavigate();
+
+    function encryptMessage(message) {
+        return CryptoJS.AES.encrypt(message, import.meta.env.VITE_SECRET).toString();
+    }
+
+    function decryptMessage(encryptedMessage) {
+        const bytes = CryptoJS.AES.decrypt(encryptedMessage,import.meta.env.VITE_SECRET);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
 
     useEffect(() => {
         if (user) {
@@ -79,7 +89,7 @@ function ChatBox() {
     }, [chat?.messages, img.url]);
 
     const handleEmoji = (e) => {
-        setText((prev) => prev + e.emoji);
+        setTexts((prev) => prev + e.emoji);
     };
 
     const handleImg = (e) => {
@@ -92,10 +102,10 @@ function ChatBox() {
     };
 
     const handleSend = async () => {
-        if (text === "" && img.file === null) return;
+        if (texts === "" && img.file === null) return;
 
         let imgUrl = null;
-
+        const text = encryptMessage(texts);
         try {
             if (img.file) {
                 setLoading(true);
@@ -122,7 +132,7 @@ function ChatBox() {
                     const chatIndex = userChatsData.chats.findIndex(c => c.chatId === chatId);
 
                     if (chatIndex > -1) {
-                        userChatsData.chats[chatIndex].lastMessage = text;
+                        userChatsData.chats[chatIndex].lastMessage = texts;
                         userChatsData.chats[chatIndex].isSeen = id === currentUser.id;
                         userChatsData.chats[chatIndex].updatedAt = Date.now();
 
@@ -140,7 +150,7 @@ function ChatBox() {
             file: null,
             url: "",
         });
-        setText("");
+        setTexts("");
         setLoading(false);
     };
 
@@ -169,14 +179,22 @@ function ChatBox() {
 
             {/* Chat Messages */}
             <div className="h-[85vh] w-screen md:w-auto md:h-[calc(100vh-140px)] mt-[10vh] overflow-y-auto p-4">
-                {chat?.messages?.map((msg, index) => ( 
-                    
-                    <div key={index} className={`flex ${msg.senderId === currentUser.id ? 'justify-end' : ''} mb-4`}>
-                        <div className={`bg-[#468189] text-white p-3 rounded-md max-w-xs ${msg.senderId === currentUser.id ? 'bg-blue-500' : 'bg-gray-700'}`}>
-                            {msg.img ? <img src={msg.img} alt="Image" className="w-full rounded-md" /> : msg.text}
-                        </div>
-                    </div>
-                ))}
+               {chat?.messages?.map((msg, index) => {
+    // Decrypt the message text
+    const decryptedText = msg.text ? decryptMessage(msg.text) : "";
+
+    return (
+        <div key={index} className={`flex ${msg.senderId === currentUser.id ? 'justify-end' : ''} mb-4`}>
+            <div className={`bg-[#468189] text-white p-3 rounded-md max-w-xs ${msg.senderId === currentUser.id ? 'bg-blue-500' : 'bg-gray-700'}`}>
+                {msg.img ? (
+                    <img src={msg.img} alt="Image" className="w-full rounded-md" />
+                ) : (
+                    decryptedText
+                )}
+            </div>
+        </div>
+    );
+})}
                 <div ref={endRef}></div>
             </div>
             {/* Message Input */}
@@ -189,8 +207,8 @@ function ChatBox() {
                 <input
                     type="text"
                     placeholder="Type a message..."
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    value={texts}
+                    onChange={(e) => setTexts(e.target.value)}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             handleSend();
