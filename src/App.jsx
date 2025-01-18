@@ -22,7 +22,6 @@ function App() {
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
       fetchUserInfo(user?.uid);
-      console.log("data fetch from app.jsx");
     });
 
     return () => {
@@ -30,7 +29,6 @@ function App() {
     };
   }, [fetchUserInfo]);
 
-  console.log(currentUser);
 
   if (isLoading)
     return (

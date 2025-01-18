@@ -100,7 +100,6 @@ export default function AddUser() {
       toast.success("Chat added successfully");
       setUser(null); // Clear the user after adding
     } catch (error) {
-      console.error(error);
       toast.error("Failed to add chat");
     }
   };

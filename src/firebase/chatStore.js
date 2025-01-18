@@ -9,15 +9,15 @@ export const useChatStore = create((set) => ({
 
   changeChat: (chatId, user) => {
     const currentUser = useUserStore.getState().currentUser;
-    console.log("from chat store", currentUser);
+    // console.log("from chat store", currentUser);
 
     if (!currentUser) {
-      console.error('Current user is not available.');
+      // console.error('Current user is not available.');
       return;
     }
 
     if (!user) {
-      console.error('Target user is not available.');
+      // console.error('Target user is not available.');
       return;
     }
 

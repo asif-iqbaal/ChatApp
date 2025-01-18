@@ -130,7 +130,6 @@ const HandleDelete = async (id) => {
       }
     } catch (error) {
       toast.error('Error deleting chat:', error);
-      console.log("delete error",error);
     }
   };
   
