@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Login from './login/login';
 import Notification from './notification/notification';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebase/firebase';
 import { useUserStore } from './firebase/userStore';
 import { useChatStore } from './firebase/chatStore';
@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
-      fetchUserInfo(user?.uid);
+        fetchUserInfo(user?.uid);
     });
 
     return () => {
@@ -41,7 +41,7 @@ function App() {
     <>
       <Router>
         <>
-          {currentUser ? (
+          {auth?.currentUser?.emailVerified ? (
             <div className='w-screen flex h-screen bg-[#faf9f9] 
              bg-[url("https://i.pinimg.com/originals/de/d0/bb/ded0bbdd8485e424327257405a86a884.gif")]
              bg-no-repeat bg-right bg-contain'>

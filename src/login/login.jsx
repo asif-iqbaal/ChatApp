@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import Avatar from './avatar.png';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword ,sendEmailVerification, signOut} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import Upload from '../firebase/upload';
 
 function Login() {
     const [hide, setHide] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [notVerify,setNotVerify] = useState(false);
     const [avatar, setAvatar] = useState({
         file: null,
         url: ""
     });
-
+    const navigation = useNavigate();
     const handleAvatar = (e) => {
         if (e.target.files[0]) {
             setAvatar({
@@ -30,8 +32,17 @@ function Login() {
         const { email, password } = Object.fromEntries(formData);
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+           const res = await signInWithEmailAndPassword(auth, email, password);
+           const user = res.user;
+            
+           if (!user.emailVerified) {
+            setNotVerify(true);
+            toast.error("Email not verified. Please verify your email first.");
+            return;
+        }
+
             toast.success("Login successful!");
+            navigation('/');
         } catch (error) {
             toast.error(error.message);
         } finally {
@@ -47,6 +58,12 @@ function Login() {
 
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
+
+            const user = res.user;
+
+            // Send verification email
+            await sendEmailVerification(user);
+
             const imgUrl = avatar.file ? await Upload(avatar.file) : "";
             await setDoc(doc(db, "users", res.user.uid), {
                 name,
@@ -55,11 +72,26 @@ function Login() {
                 id: res.user.uid,
                 blocked: []
             });
-            toast.success("Registration successful! Please login.");
+            toast.success("Registration successful! Please verify your account.");
         } catch (error) {
             toast.error(error.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const resendVerification = async () => {
+        try {
+            if (auth.currentUser) {
+                // Send the verification email to the currently logged-in user
+                await sendEmailVerification(auth.currentUser);
+                toast.success("Verification email sent! Please check your inbox.");
+            } else {
+                toast.error("No user is logged in!");
+            }
+        } catch (error) {
+            console.error("Error sending verification email:", error);
+            toast.error("Failed to resend verification email.");
         }
     };
 
@@ -104,6 +136,12 @@ function Login() {
                         >
                             {loading ? "Loading..." : "Login"}
                         </button>
+                       { notVerify && <button
+                            onClick={resendVerification}
+                            className="mt-4 w-full p-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                        >
+                            Resend Verification Email
+                        </button>}
                     </form>
                 ) : (
                     <form onSubmit={handleRegister} className="space-y-6">
